@@ -55,11 +55,13 @@ class Game{
 
 		this.cube = new THREE.Mesh( new THREE.BoxBufferGeometry(2,2,2), new THREE.MeshStandardMaterial());
 		this.cube.receiveShadow = true;
+		this.cube.castShadow = true;
 		this.cube.position.set(3,3,0);
 		this.scene.add(this.cube);
 
-		this.knot = new THREE.Mesh( new THREE.TorusKnotGeometry( 1, 0.3, 100, 16 ), new THREE.MeshPhongMaterial( { color: 0x999999 } ) );
+		this.knot = new THREE.Mesh( new THREE.TorusKnotGeometry( 1, 0.3, 100, 16 ), new THREE.MeshNormalMaterial({}));
 		this.knot.receiveShadow = true;
+		this.knot.castShadow = true;
 		this.knot.position.set(-3,3,0)
 		this.scene.add(this.knot);
 
@@ -81,14 +83,14 @@ class Game{
 		container.appendChild( this.renderer.domElement );
        
 
-		// this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+		this.controls = new OrbitControls( this.camera, this.renderer.domElement );
 		// this.controls.target.set(0, 1, 0);
 		// this.controls.autoRotate = true;
 		// this.controls.autoRotateSpeed = 4.0;
 
         this.loadDino();
 
-		this.createCameras();
+		// this.createCameras();
 
 		const btn = document.getElementById('camera-btn');
 		btn.addEventListener('click', this.changeCamera.bind(this));
@@ -312,12 +314,15 @@ class Game{
 
         this.renderer.render( this.scene, this.camera );
 
-		// this.controls.update();
+		this.controls.update();
 
-		this.camera.position.lerp(this.cameras[this.cameraIndex].getWorldPosition(new THREE.Vector3()), 0.05);
-		const pos = this.player.position.clone();
-		pos.y += 3;
-		this.camera.lookAt(pos);
+
+
+
+		// this.camera.position.lerp(this.cameras[this.cameraIndex].getWorldPosition(new THREE.Vector3()), 0.05);
+		// const pos = this.player.position.clone();
+		// pos.y += 3;
+		// this.camera.lookAt(pos);
 
 		if (this.sun != undefined){
 			this.sun.position.x =  this.player.position.x;
