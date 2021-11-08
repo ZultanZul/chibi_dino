@@ -25,14 +25,14 @@ class Game{
 		let col = 0x000000;
 		this.scene = new THREE.Scene();
 		this.scene.background = new THREE.Color( col );
-		this.scene.fog = new THREE.Fog( 0x000000, 10, 50 );
+		this.scene.fog = new THREE.Fog( 0x000000, 40, 80 );
 		
 		const ambient = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
 		this.scene.add(ambient);
 
 
 
-		const dirLight = new THREE.DirectionalLight( 0xffffff );
+		const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		dirLight.position.set( - 3, 10, - 10 );
 		dirLight.castShadow = true;
 		dirLight.shadow.mapSize.width = 1024; 
@@ -53,17 +53,17 @@ class Game{
 		this.scene.add(plane);
 
 
-		this.cube = new THREE.Mesh( new THREE.BoxBufferGeometry(2,2,2), new THREE.MeshStandardMaterial());
-		this.cube.receiveShadow = true;
-		this.cube.castShadow = true;
-		this.cube.position.set(3,3,0);
-		this.scene.add(this.cube);
+		// this.cube = new THREE.Mesh( new THREE.BoxBufferGeometry(2,2,2), new THREE.MeshStandardMaterial());
+		// this.cube.receiveShadow = true;
+		// this.cube.castShadow = true;
+		// this.cube.position.set(3,3,0);
+		// this.scene.add(this.cube);
 
-		this.knot = new THREE.Mesh( new THREE.TorusKnotGeometry( 1, 0.3, 100, 16 ), new THREE.MeshNormalMaterial({}));
-		this.knot.receiveShadow = true;
-		this.knot.castShadow = true;
-		this.knot.position.set(-3,3,0)
-		this.scene.add(this.knot);
+		// this.knot = new THREE.Mesh( new THREE.TorusKnotGeometry( 1, 0.3, 100, 16 ), new THREE.MeshNormalMaterial({}));
+		// this.knot.receiveShadow = true;
+		// this.knot.castShadow = true;
+		// this.knot.position.set(-3,3,0)
+		// this.scene.add(this.knot);
 
 
 		this.player	= new THREE.Object3D();
@@ -83,14 +83,14 @@ class Game{
 		container.appendChild( this.renderer.domElement );
        
 
-		this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+		// this.controls = new OrbitControls( this.camera, this.renderer.domElement );
 		// this.controls.target.set(0, 1, 0);
 		// this.controls.autoRotate = true;
 		// this.controls.autoRotateSpeed = 4.0;
 
         this.loadDino();
 
-		// this.createCameras();
+		this.createCameras();
 
 		const btn = document.getElementById('camera-btn');
 		btn.addEventListener('click', this.changeCamera.bind(this));
@@ -123,7 +123,8 @@ class Game{
 		this.cameras.push(frontCam);
 
 		const overheadCam = new THREE.Object3D();
-		overheadCam.position.set(0, 20, 0);
+		overheadCam.position.set(10, 8, 8);
+		this.player.add(overheadCam);
 		this.cameras.push(overheadCam);
 	}
     
@@ -267,7 +268,6 @@ class Game{
 	}
 
 	playerControl(forward, turn, jump){
-		// console.log(forward, turn, jump);
 		if (forward==0 && turn==0 && jump==0){
 				delete this.player.userData.move;
 		}else{
@@ -279,6 +279,7 @@ class Game{
 				this.player.userData.move = { forward, turn, jump, time: this.clock.getElapsedTime(), speed: 1 }; 
 				this.cameraIndex = 1;
 			}
+			// console.log(forward, turn, jump,this.player.userData.move);
 		}	
 	}
 
@@ -289,6 +290,7 @@ class Game{
         if (this.mixer !== undefined) this.mixer.update(dt);
 
 		if (this.player.userData.move!==undefined){
+
 			if (this.player.userData.move.forward>0 && this.player.userData.move.speed<10) this.player.userData.move.speed += 0.05;
 
 			this.player.translateZ(this.player.userData.move.forward * dt * this.player.userData.move.speed);
@@ -298,6 +300,7 @@ class Game{
 				this.action = 'back_pedal';
 				this.cameraIndex = 0;
 			  }else if (this.player.userData.move.forward===0){
+					this.player.userData.move.speed = 1;
 				if (this.player.userData.move.turn<0){
 					this.action = 'turn_right_in_place';
 				}else{
@@ -314,15 +317,15 @@ class Game{
 
         this.renderer.render( this.scene, this.camera );
 
-		this.controls.update();
+		// this.controls.update();
 
 
 
 
-		// this.camera.position.lerp(this.cameras[this.cameraIndex].getWorldPosition(new THREE.Vector3()), 0.05);
-		// const pos = this.player.position.clone();
-		// pos.y += 3;
-		// this.camera.lookAt(pos);
+		this.camera.position.lerp(this.cameras[this.cameraIndex].getWorldPosition(new THREE.Vector3()), 0.05);
+		const pos = this.player.position.clone();
+		pos.y += 3;
+		this.camera.lookAt(pos);
 
 		if (this.sun != undefined){
 			this.sun.position.x =  this.player.position.x;
@@ -332,11 +335,11 @@ class Game{
 		}
 
 
-		this.cube.rotation.x += 0.03;
-		this.cube.rotation.y += 0.03;
+		// this.cube.rotation.x += 0.03;
+		// this.cube.rotation.y += 0.03;
 
-		this.knot.rotation.x -= 0.03;
-		this.knot.rotation.y -= 0.03;
+		// this.knot.rotation.x -= 0.03;
+		// this.knot.rotation.y -= 0.03;
     }
 }
 
